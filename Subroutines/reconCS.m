@@ -95,7 +95,7 @@ if raw.channels>1
     
     [I,CM]=adapt_array_cmap(Temp,eye(ncoils),1);
     %CM=flip(CM,1);
-    coilmap2figure(CM,raw,N)
+    coilmap2figure(flip(CM,1),raw,N)
 else
     CM=ones(raw.xres,raw.yres);
 end
