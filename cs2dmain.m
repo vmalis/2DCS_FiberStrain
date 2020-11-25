@@ -17,17 +17,47 @@ disp("========================================")
 raw=pfile2struct;
 
 
-%% recon 
+%% recon  data
 
+% 1st set is full space
 Recon = reconCS(raw(1),'full',1);
 
+% sets 2-5 are CS
 for i=2:size(raw,2)
-    
-    ReconCS(i) = recon(raw(i), 'cs4vps2', i);
-    
+    Recon(i) = reconCS(raw(i), 'cs4vps2', i); 
+end
+
+
+
+%% anisotrpoic diffusion filter 
+% from here for all calculation the smoothed velocity volumes must be used
+
+num_iter=10; kappa=2; option=1; delta_t=1/7;
+% calling the anisodiff2d code; options are set above; 
+% less smoothing with lower iterations and smaller kappa.
+
+q = waitbar(0, 'Filtering...');
+
+% just for single set, later to be "for looped" for all sets    
+j=1;  
+
+%number of frames
+numphases=size(Recon(j).M,3);
+
+for i=1:numphases
+         
+        Recon(j).Vx_SM (:,:,i) = anisodiff2D(Recon(j).Vx(:,:,i),...
+            Recon(j).M(:,:,i),num_iter,delta_t, kappa,option);
+        Recon(j).Vy_SM (:,:,i) = anisodiff2D(Recon(j).Vy(:,:,i),...
+            Recon(j).M(:,:,i),num_iter,delta_t, kappa,option);
+        Recon(j).Vz_SM (:,:,i) = anisodiff2D(Recon(j).Vz(:,:,i),...
+            Recon(j).M(:,:,i),num_iter,delta_t, kappa,option);
+
+         waitbar(i/numphases,q,'Filtering...');      
 end
 
 save cs_processed.mat Recon
+close(q)
 
 
 %% read force
