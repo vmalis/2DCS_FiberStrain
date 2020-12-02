@@ -24,7 +24,7 @@ Recon = reconCS(raw(1),'full',1);
 
 % sets 2-5 are CS
 for i=2:size(raw,2)
-    Recon(i) = reconCS(raw(i), 'cs4vps2', i); 
+    Recon_CS(i-1) = reconCS(raw(i), 'cs4vps2', i); 
 end
 
 
